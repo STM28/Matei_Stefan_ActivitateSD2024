@@ -106,6 +106,125 @@ void stergereLista(Nod** lista)
 
 }
 
+typedef struct NodLdi NodLdi;
+struct NodLdi {
+	Santier info;
+	NodLdi* prev;
+	NodLdi* next;
+};
+
+typedef struct ListaDubla ListaDubla;
+struct ListaDubla {
+	NodLdi* prim;
+	NodLdi* ultim;
+};
+
+void inserareInceputLdi(ListaDubla* lista, Santier s) {
+	NodLdi* aux = malloc(sizeof(NodLdi));
+	aux->info = s;
+	aux->next = lista->prim;
+	aux->prev = NULL;
+	if (lista->prim != NULL) {
+		lista->prim->prev = aux;
+		//lista->prim = aux;
+	}
+	else {
+		//lista->prim = aux;
+		lista->ultim = aux;
+	}
+	lista->prim = aux;
+	
+}
+
+void afisareLdiDeLaInceput(ListaDubla lista)
+{
+	for (NodLdi* nod = lista.prim; nod != NULL; nod = nod->next)
+		afisareSantier(nod->info);
+}
+
+void stergereSantier(ListaDubla* lista, const char* numeSantier)
+{
+	NodLdi* nod = lista->prim;
+	while (nod != NULL)
+	{
+		if (strcmp(nod->info.numeProiect, numeSantier) == 0)
+		{
+			if (nod->prev == NULL)
+			{
+				if (nod->next == NULL)
+				{
+					lista->prim = NULL;
+					lista->ultim = NULL;
+
+				}
+				else
+				{
+					nod->next->prev = NULL;
+					lista->prim = nod->next;
+				}
+			}
+			else {
+
+				if (nod->next == NULL)
+				{
+					nod->prev->next = NULL;
+					lista->ultim = nod->prev;
+				}
+				else
+				{
+					nod->prev->next = nod->next;
+					nod->next->prev = nod->prev;
+				}
+			}
+			free(nod->info.numeProiect);
+			free(nod);
+		}
+		nod = nod->next;
+	}
+
+	
+}
+
+
+int calcNrTotalMuncitori(ListaDubla lista)
+{
+	int s = 0;
+	for (NodLdi* i = lista.prim; i != NULL; i = i->next)
+	{
+		s += i->info.nrMuncitori;
+	}
+	return s;
+}
+
+int caclNrMuncitoriSuprafata(ListaDubla lista, int suprafata)
+{
+	int s = 0;
+	for (NodLdi* i = lista.prim; i != NULL; i = i->next)
+	{
+		if(i->info.suprafata<suprafata)
+		s += i->info.nrMuncitori;
+	}
+	return s;
+}
+
+
+void stergereCompleta(ListaDubla* lista)
+{
+	if (lista != NULL)
+	{
+		NodLdi* aux = lista->prim;
+		while (aux != NULL)
+		{
+			free(aux->info.numeProiect);
+			NodLdi* temp = aux->next;
+			free(aux);
+			aux = temp;
+		}
+		lista->prim = NULL;
+		lista->ultim = NULL;
+	}
+}
+
 int main()
 {
 	Nod* lista = NULL;
@@ -115,13 +234,23 @@ int main()
 	lista=inserareInceput(s1, lista);
 	lista=inserareInceput(s2, lista);
 	lista=inserareInceput(s3, lista);
-	afisareLista(lista);
-	int suma = sumaMuncitori(lista);
-	printf("%d", suma);
-	printf("\n%s\n", numeSantierDensMax(lista));
+	//afisareLista(lista);
+	//int suma = sumaMuncitori(lista);
+	//printf("%d", suma);
+	//printf("\n%s\n", numeSantierDensMax(lista));
 
 
-	stergereLista(&lista);
-	afisareLista(lista);
+	//stergereLista(&lista);
+	//afisareLista(lista);
 	//tema Stergere un nod(grija la refeacere legatura)
+	ListaDubla listad;
+	listad.prim = NULL;
+	listad.ultim = NULL;
+	inserareInceputLdi(&listad, s1);
+	inserareInceputLdi(&listad, s2);
+	inserareInceputLdi(&listad, s3);
+	afisareLdiDeLaInceput(listad);
+	stergereSantier(&listad,"Santier3");
+	afisareLdiDeLaInceput(listad);
+
 }
