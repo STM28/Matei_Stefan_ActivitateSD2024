@@ -160,6 +160,7 @@ void main()
 	Galerie g4=initGalerie(4,"Louvre",30);
 	Galerie g5=initGalerie(5,"Istorie",15);
 	Galerie g6=initGalerie(6,"Geologie",17);
+
 	HashTable tabela = initializareHashTable(5);
 
 	inserareGalerieInTabela(tabela, g1);
